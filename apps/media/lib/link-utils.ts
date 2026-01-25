@@ -310,41 +310,84 @@ export async function fetchLinkMetadata(url: string): Promise<LinkMetadata> {
  * Detect link type from URL
  */
 export function detectLinkType(url: string): LinkType {
-  const lowerUrl = url.toLowerCase();
+  try {
+    const urlObj = new URL(url);
+    const hostname = urlObj.hostname.toLowerCase().replace(/^www\./, "");
+    const pathname = urlObj.pathname.toLowerCase();
 
-  if (
-    lowerUrl.includes("twitter.com") ||
-    lowerUrl.includes("x.com") ||
-    lowerUrl.includes("/status/")
-  ) {
-    return "tweet";
+    // Tweet detection: only for official Twitter/X hosts, with status-like path
+    if (
+      (hostname === "twitter.com" || hostname === "x.com") &&
+      pathname.includes("/status/")
+    ) {
+      return "tweet";
+    }
+
+    // Video platforms
+    if (
+      hostname === "youtube.com" ||
+      hostname === "m.youtube.com" ||
+      hostname === "youtu.be" ||
+      hostname === "vimeo.com"
+    ) {
+      return "video";
+    }
+
+    // GitHub repositories and resources
+    if (hostname === "github.com") {
+      return "github";
+    }
+
+    // Common article/blog platforms
+    if (
+      hostname === "medium.com" ||
+      hostname === "substack.com" ||
+      hostname.startsWith("blog.") ||
+      pathname.includes("/blog/") ||
+      pathname.includes("/article/") ||
+      pathname.includes("/news/")
+    ) {
+      return "article";
+    }
+
+    return "other";
+  } catch {
+    // Fallback for invalid URLs: revert to heuristic string checks
+    const lowerUrl = url.toLowerCase();
+
+    if (
+      (lowerUrl.includes("twitter.com") || lowerUrl.includes("x.com")) &&
+      lowerUrl.includes("/status/")
+    ) {
+      return "tweet";
+    }
+
+    if (
+      lowerUrl.includes("youtube.com") ||
+      lowerUrl.includes("youtu.be") ||
+      lowerUrl.includes("vimeo.com")
+    ) {
+      return "video";
+    }
+
+    if (lowerUrl.includes("github.com")) {
+      return "github";
+    }
+
+    // Common article/blog platforms
+    if (
+      lowerUrl.includes("medium.com") ||
+      lowerUrl.includes("substack.com") ||
+      lowerUrl.includes("blog.") ||
+      lowerUrl.includes("/blog/") ||
+      lowerUrl.includes("/article/") ||
+      lowerUrl.includes("/news/")
+    ) {
+      return "article";
+    }
+
+    return "other";
   }
-
-  if (
-    lowerUrl.includes("youtube.com") ||
-    lowerUrl.includes("youtu.be") ||
-    lowerUrl.includes("vimeo.com")
-  ) {
-    return "video";
-  }
-
-  if (lowerUrl.includes("github.com")) {
-    return "github";
-  }
-
-  // Common article/blog platforms
-  if (
-    lowerUrl.includes("medium.com") ||
-    lowerUrl.includes("substack.com") ||
-    lowerUrl.includes("blog.") ||
-    lowerUrl.includes("/blog/") ||
-    lowerUrl.includes("/article/") ||
-    lowerUrl.includes("/news/")
-  ) {
-    return "article";
-  }
-
-  return "other";
 }
 
 /**
