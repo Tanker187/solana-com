@@ -48,12 +48,29 @@ const EventsDetailSection = ({ event = null }) => {
   const eventUrl =
     event.platform === "external" ? event.key : event.rsvp || event.lumaUrl;
 
+  let isSolanaDomain = false;
+  if (eventUrl) {
+    try {
+      // Try parsing as absolute URL first
+      const urlObj = new URL(
+        eventUrl,
+        typeof window !== "undefined" ? window.location.origin : "https://solana.com"
+      );
+      const host = urlObj.hostname;
+      isSolanaDomain =
+        host === "solana.com" || host.endsWith(".solana.com");
+    } catch (e) {
+      // If parsing fails, treat as external
+      isSolanaDomain = false;
+    }
+  }
+
   return (
     <StyledSection className="my-10">
       <div className="event-img">
         <Link
           target="_blank"
-          rel={!eventUrl.includes("solana.com") && "nofollow"}
+          rel={isSolanaDomain ? undefined : "nofollow"}
           to={eventUrl}
         >
           <Image
@@ -91,7 +108,7 @@ const EventsDetailSection = ({ event = null }) => {
           to={eventUrl}
           arrow={true}
           newTab
-          rel={!eventUrl.includes("solana.com") && "nofollow"}
+          rel={isSolanaDomain ? undefined : "nofollow"}
         >
           {t("events.detail.action")}
         </Button>
