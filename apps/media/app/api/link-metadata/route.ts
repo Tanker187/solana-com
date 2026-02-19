@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import he from "he";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 3600; // Cache for 1 hour
@@ -70,18 +71,13 @@ async function fetchMetadataForUrl(url: string): Promise<LinkMetadata> {
         const html = await response.text();
         const titleMatch = html.match(/<title[^>]*>([^<]+)<\/title>/i);
         if (titleMatch) {
-          metadata.title = titleMatch[1]
-            .replace(" - YouTube", "")
-            .replace(/&amp;/g, "&")
-            .replace(/&#39;/g, "'");
+          metadata.title = he.decode(titleMatch[1]).replace(" - YouTube", "");
         }
         const descMatch = html.match(
           /<meta[^>]*name=["']description["'][^>]*content=["']([^"']+)["']/i
         );
         if (descMatch) {
-          metadata.description = descMatch[1]
-            .replace(/&amp;/g, "&")
-            .replace(/&#39;/g, "'");
+          metadata.description = he.decode(descMatch[1]);
         }
       }
     } catch {
