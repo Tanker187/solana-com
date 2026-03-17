@@ -58,7 +58,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
     "@svgr/webpack": "^8.1.0",
-    "@tinacms/cli": "^1.10.2",
+    "@tinacms/cli": "^2.1.8",
     "@types/js-cookie": "^3.0.6",
     "@types/lodash": "^4.17.21",
     "@types/node": "^22.18.0",
