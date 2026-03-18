@@ -14,8 +14,13 @@ jobs:
     name: Run i18n for web (UI strings)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: lingodotdev/lingo.dev@main
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@fa2e9d605c4eeb9fcad4c99c224cee0c6c7f3594 # v2.16.0
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: lingodotdev/lingo.dev@48f8b3bdf736ac8d792b252fa25de97058f14219 # main
         env:
           GH_TOKEN: ${{ github.token }}
         with:
@@ -30,8 +35,13 @@ jobs:
     name: Run i18n for docs (content)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: lingodotdev/lingo.dev@main
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@fa2e9d605c4eeb9fcad4c99c224cee0c6c7f3594 # v2.16.0
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: lingodotdev/lingo.dev@48f8b3bdf736ac8d792b252fa25de97058f14219 # main
         env:
           GH_TOKEN: ${{ github.token }}
         with:
@@ -46,8 +56,13 @@ jobs:
     name: Run i18n for accelerate (UI strings)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: lingodotdev/lingo.dev@main
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@fa2e9d605c4eeb9fcad4c99c224cee0c6c7f3594 # v2.16.0
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: lingodotdev/lingo.dev@48f8b3bdf736ac8d792b252fa25de97058f14219 # main
         env:
           GH_TOKEN: ${{ github.token }}
         with:
