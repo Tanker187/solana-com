@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("server-only", () => ({}));
 
@@ -71,7 +71,7 @@ vi.mock("@/lib/content-renderer", () => ({
 }));
 
 import { fetchLatestLinks } from "@/lib/keystatic/link-data";
-import { fetchLatestPosts } from "@/lib/keystatic/post-data";
+import { fetchFeaturedPost, fetchLatestPosts } from "@/lib/keystatic/post-data";
 import { fetchLatestReports } from "@/lib/keystatic/report-data";
 import * as keystaticPostData from "@/lib/keystatic/post-data";
 import { GET as getLatestLinks } from "@/app/api/links/latest/route";
@@ -80,6 +80,8 @@ import { GET as getLatestReports } from "@/app/api/reports/latest/route";
 
 describe("latest content filters", () => {
   beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-03-24T00:00:00.000Z"));
     vi.clearAllMocks();
 
     readerMock.collections.categories.read.mockImplementation((slug: string) =>
@@ -87,8 +89,8 @@ describe("latest content filters", () => {
         {
           ecosystem: { name: "Ecosystem" },
           developers: { name: "Developers" },
-        }[slug] ?? null
-      )
+        }[slug] ?? null,
+      ),
     );
 
     readerMock.collections.tags.read.mockImplementation((slug: string) =>
@@ -96,14 +98,18 @@ describe("latest content filters", () => {
         {
           defi: { name: "DeFi" },
           nft: { name: "NFT" },
-        }[slug] ?? null
-      )
+        }[slug] ?? null,
+      ),
     );
 
     readerMock.collections.authors.read.mockResolvedValue({
       name: "Solana Foundation",
       avatar: null,
     });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   describe("fetchLatestLinks", () => {
@@ -140,7 +146,7 @@ describe("latest content filters", () => {
 
       readerMock.collections.links.list.mockResolvedValue(Object.keys(links));
       readerMock.collections.links.read.mockImplementation((slug: string) =>
-        Promise.resolve(links[slug as keyof typeof links] ?? null)
+        Promise.resolve(links[slug as keyof typeof links] ?? null),
       );
 
       const result = await fetchLatestLinks({
@@ -175,7 +181,7 @@ describe("latest content filters", () => {
 
       readerMock.collections.links.list.mockResolvedValue(Object.keys(links));
       readerMock.collections.links.read.mockImplementation((slug: string) =>
-        Promise.resolve(links[slug as keyof typeof links] ?? null)
+        Promise.resolve(links[slug as keyof typeof links] ?? null),
       );
 
       const result = await fetchLatestLinks({
@@ -184,6 +190,43 @@ describe("latest content filters", () => {
       });
 
       expect(result.links.map((item) => item.id)).toEqual(["slug-match-link"]);
+    });
+
+    it("sorts links by full publishedAt datetime descending", async () => {
+      const links = {
+        "later-link": {
+          title: "Later Link",
+          url: "https://example.com/later",
+          linkType: "article",
+          description: "later",
+          publishedAt: "2026-03-11T18:30:00.000Z",
+          categories: [{ category: "ecosystem" }],
+          tags: [{ tag: "defi" }],
+        },
+        "earlier-link": {
+          title: "Earlier Link",
+          url: "https://example.com/earlier",
+          linkType: "article",
+          description: "earlier",
+          publishedAt: "2026-03-11T07:15:00.000Z",
+          categories: [{ category: "ecosystem" }],
+          tags: [{ tag: "defi" }],
+        },
+      };
+
+      readerMock.collections.links.list.mockResolvedValue(Object.keys(links));
+      readerMock.collections.links.read.mockImplementation((slug: string) =>
+        Promise.resolve(links[slug as keyof typeof links] ?? null),
+      );
+
+      const result = await fetchLatestLinks({});
+
+      expect(result.links.map((item) => item.id)).toEqual([
+        "later-link",
+        "earlier-link",
+      ]);
+      expect(result.links[0]?.publishedAtRaw).toBe("2026-03-11T18:30:00.000Z");
+      expect(result.links[1]?.publishedAtRaw).toBe("2026-03-11T07:15:00.000Z");
     });
   });
 
@@ -212,7 +255,7 @@ describe("latest content filters", () => {
 
       readerMock.collections.posts.list.mockResolvedValue(Object.keys(posts));
       readerMock.collections.posts.read.mockImplementation((slug: string) =>
-        Promise.resolve(posts[slug as keyof typeof posts] ?? null)
+        Promise.resolve(posts[slug as keyof typeof posts] ?? null),
       );
 
       const result = await fetchLatestPosts({
@@ -247,7 +290,7 @@ describe("latest content filters", () => {
 
       readerMock.collections.posts.list.mockResolvedValue(Object.keys(posts));
       readerMock.collections.posts.read.mockImplementation((slug: string) =>
-        Promise.resolve(posts[slug as keyof typeof posts] ?? null)
+        Promise.resolve(posts[slug as keyof typeof posts] ?? null),
       );
 
       const result = await fetchLatestPosts({
@@ -282,7 +325,7 @@ describe("latest content filters", () => {
 
       readerMock.collections.posts.list.mockResolvedValue(Object.keys(posts));
       readerMock.collections.posts.read.mockImplementation((slug: string) =>
-        Promise.resolve(posts[slug as keyof typeof posts] ?? null)
+        Promise.resolve(posts[slug as keyof typeof posts] ?? null),
       );
 
       const result = await fetchLatestPosts({});
@@ -296,7 +339,7 @@ describe("latest content filters", () => {
           status: "published",
           title: "Live Post",
           description: "live post",
-          publishedAt: "2026-03-11T00:00:00.000Z",
+          publishedAt: "2000-03-11T00:00",
           author: "solana-foundation",
           categories: [{ category: "ecosystem" }],
           tags: [{ tag: "defi" }],
@@ -305,7 +348,7 @@ describe("latest content filters", () => {
           status: "published",
           title: "Scheduled Post",
           description: "scheduled post",
-          publishedAt: "2026-03-25T12:00:00.000Z",
+          publishedAt: "2099-03-25T12:00",
           author: "solana-foundation",
           categories: [{ category: "ecosystem" }],
           tags: [{ tag: "defi" }],
@@ -314,12 +357,42 @@ describe("latest content filters", () => {
 
       readerMock.collections.posts.list.mockResolvedValue(Object.keys(posts));
       readerMock.collections.posts.read.mockImplementation((slug: string) =>
-        Promise.resolve(posts[slug as keyof typeof posts] ?? null)
+        Promise.resolve(posts[slug as keyof typeof posts] ?? null),
       );
 
       const result = await fetchLatestPosts({});
 
       expect(result.posts.map((item) => item.id)).toEqual(["live-post"]);
+    });
+
+    it("excludes future-dated posts from featured post results", async () => {
+      const posts = {
+        "live-featured-post": {
+          status: "published",
+          title: "Live Featured Post",
+          description: "live featured post",
+          publishedAt: "2000-03-11T00:00",
+          author: "solana-foundation",
+          tags: [{ tag: "featured" }],
+        },
+        "scheduled-featured-post": {
+          status: "published",
+          title: "Scheduled Featured Post",
+          description: "scheduled featured post",
+          publishedAt: "2099-03-25T12:00",
+          author: "solana-foundation",
+          tags: [{ tag: "featured" }],
+        },
+      };
+
+      readerMock.collections.posts.list.mockResolvedValue(Object.keys(posts));
+      readerMock.collections.posts.read.mockImplementation((slug: string) =>
+        Promise.resolve(posts[slug as keyof typeof posts] ?? null),
+      );
+
+      const result = await fetchFeaturedPost();
+
+      expect(result.post?.id).toBe("live-featured-post");
     });
 
     it("dedupes duplicate tag and category names in transformed posts", async () => {
@@ -328,8 +401,8 @@ describe("latest content filters", () => {
           Promise.resolve(
             {
               ecosystem: { name: "Ecosystem" },
-            }[slug] ?? null
-          )
+            }[slug] ?? null,
+          ),
       );
 
       readerMock.collections.tags.read.mockImplementation((slug: string) =>
@@ -337,8 +410,8 @@ describe("latest content filters", () => {
           {
             ecosystem: { name: "Ecosystem" },
             defi: { name: "DeFi" },
-          }[slug] ?? null
-        )
+          }[slug] ?? null,
+        ),
       );
 
       const posts = {
@@ -355,7 +428,7 @@ describe("latest content filters", () => {
 
       readerMock.collections.posts.list.mockResolvedValue(Object.keys(posts));
       readerMock.collections.posts.read.mockImplementation((slug: string) =>
-        Promise.resolve(posts[slug as keyof typeof posts] ?? null)
+        Promise.resolve(posts[slug as keyof typeof posts] ?? null),
       );
 
       const result = await fetchLatestPosts({});
@@ -392,11 +465,11 @@ describe("latest content filters", () => {
       };
 
       readerMock.collections.switchbacks.list.mockResolvedValue(
-        Object.keys(reports)
+        Object.keys(reports),
       );
       readerMock.collections.switchbacks.read.mockImplementation(
         (slug: string) =>
-          Promise.resolve(reports[slug as keyof typeof reports] ?? null)
+          Promise.resolve(reports[slug as keyof typeof reports] ?? null),
       );
 
       const result = await fetchLatestReports({});
@@ -413,7 +486,8 @@ describe("latest content filters", () => {
           {
             id: "link-1",
             title: "Link 1",
-            publishedAt: "11 Mar 2026",
+            publishedAt: "Mar 11, 2026, 12:00 PM UTC",
+            publishedAtRaw: "2026-03-11T12:00:00.000Z",
             url: "https://example.com/link-1",
             source: "Source",
             linkType: "article",
@@ -431,7 +505,7 @@ describe("latest content filters", () => {
         ["links-5-cursor-1-defi-nft"],
         expect.objectContaining({
           tags: ["links"],
-        })
+        }),
       );
       expect(fetchLatestLinksMock).toHaveBeenCalledWith({
         limit: 5,
@@ -443,6 +517,7 @@ describe("latest content filters", () => {
         expect.objectContaining({
           id: "link-1",
           categoryId: "defi",
+          date: "2026-03-11T12:00:00.000Z",
         }),
       ]);
     });
@@ -483,7 +558,7 @@ describe("latest content filters", () => {
         ["posts-2-post-0-ecosystem-defi"],
         expect.objectContaining({
           tags: ["posts"],
-        })
+        }),
       );
       expect(fetchLatestPostsSpy).toHaveBeenCalledWith({
         limit: 2,
@@ -537,8 +612,8 @@ describe("latest content filters", () => {
                 tags: [{ tag: "defi" }],
                 image: { src: "/uploads/scheduled-report.webp" },
               },
-            }[slug] ?? null
-          )
+            }[slug] ?? null,
+          ),
       );
 
       const response = (await getLatestReports({

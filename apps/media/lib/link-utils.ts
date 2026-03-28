@@ -1,9 +1,6 @@
 import { LinkItem, LinkMetadata, LinkType } from "./link-types";
 import { ContentDocument } from "./post-types";
-import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
-
-dayjs.extend(utc);
+import { formatPublishedAt } from "./keystatic/publishing";
 
 // Type for link data from Keystatic
 interface LinkData {
@@ -26,12 +23,10 @@ interface LinkData {
 export function transformLink(
   linkData: LinkData,
   resolvedCategories?: string[],
-  resolvedTags?: string[]
+  resolvedTags?: string[],
 ): LinkItem {
-  // Format date in UTC to avoid timezone conversion issues
-  const formattedDate = linkData.publishedAt
-    ? dayjs.utc(linkData.publishedAt).format("DD MMM YYYY")
-    : "";
+  const publishedAtRaw = linkData.publishedAt ?? null;
+  const formattedDate = formatPublishedAt(publishedAtRaw);
 
   return {
     id: linkData.slug,
@@ -42,6 +37,7 @@ export function transformLink(
     thumbnailImage: linkData.thumbnailImage,
     source: linkData.source || getSourceFromUrl(linkData.url),
     publishedAt: formattedDate,
+    publishedAtRaw,
     categories: resolvedCategories || [],
     tags: resolvedTags || [],
     featured: linkData.featured || false,
@@ -109,10 +105,10 @@ async function enrichLinkWithMetadata(link: LinkItem): Promise<LinkItem> {
  * Enrich multiple links with fetched metadata (parallel)
  */
 export async function enrichLinksWithMetadata(
-  links: LinkItem[]
+  links: LinkItem[],
 ): Promise<LinkItem[]> {
   const enrichedLinks = await Promise.all(
-    links.map((link) => enrichLinkWithMetadata(link))
+    links.map((link) => enrichLinkWithMetadata(link)),
   );
   return enrichedLinks;
 }
@@ -180,7 +176,7 @@ export async function fetchLinkMetadata(url: string): Promise<LinkMetadata> {
               .replace(/&#39;/g, "'");
           }
           const descMatch = html.match(
-            /<meta[^>]*name=["']description["'][^>]*content=["']([^"']+)["']/i
+            /<meta[^>]*name=["']description["'][^>]*content=["']([^"']+)["']/i,
           );
           if (descMatch) {
             metadata.description = descMatch[1]
@@ -228,14 +224,14 @@ export async function fetchLinkMetadata(url: string): Promise<LinkMetadata> {
     // Helper to extract meta content (handles both property/content orders)
     const extractMeta = (
       property: string,
-      attrName: string = "property"
+      attrName: string = "property",
     ): string | null => {
       // Try property="..." content="..."
       let match = html.match(
         new RegExp(
           `<meta[^>]*${attrName}=["']${property}["'][^>]*content=["']([^"']+)["']`,
-          "i"
-        )
+          "i",
+        ),
       );
       if (match) return match[1];
 
@@ -243,8 +239,8 @@ export async function fetchLinkMetadata(url: string): Promise<LinkMetadata> {
       match = html.match(
         new RegExp(
           `<meta[^>]*content=["']([^"']+)["'][^>]*${attrName}=["']${property}["']`,
-          "i"
-        )
+          "i",
+        ),
       );
       return match ? match[1] : null;
     };

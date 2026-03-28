@@ -114,7 +114,7 @@ export default config({
           {
             label: "Categories",
             itemLabel: (props) => props.fields.category.value || "Category",
-          }
+          },
         ),
         tags: fields.array(
           fields.object({
@@ -126,10 +126,16 @@ export default config({
           {
             label: "Tags",
             itemLabel: (props) => props.fields.tag.value || "Tag",
-          }
+          },
         ),
         body: fields.mdx({
           label: "Body",
+          options: {
+            image: {
+              directory: "public/uploads/posts",
+              publicPath: "/uploads/posts",
+            },
+          },
           components: componentBlocks,
         }),
         cta: fields.relationship({
@@ -215,7 +221,7 @@ export default config({
           {
             label: "Hosts",
             itemLabel: (props) => props.fields.host.value || "Host",
-          }
+          },
         ),
         applePodcastsUrl: fields.text({
           label: "Apple Podcasts URL",
@@ -224,6 +230,10 @@ export default config({
         spotifyUrl: fields.text({
           label: "Spotify URL",
           description: "Link to this podcast on Spotify",
+        }),
+        youtubeUrl: fields.text({
+          label: "YouTube URL",
+          description: "Link to this podcast on YouTube",
         }),
         rssFeedUrl: fields.text({
           label: "RSS Feed URL",
@@ -254,6 +264,10 @@ export default config({
           label: "Avatar",
           directory: "public/uploads/authors",
           publicPath: "/uploads/authors",
+        }),
+        twitterUrl: fields.text({
+          label: "Twitter / X URL",
+          description: "Public profile URL for this author on X",
         }),
         bio: fields.mdx({
           label: "Bio",
@@ -316,7 +330,7 @@ export default config({
               validation: { isRequired: true },
             }),
           },
-          { label: "Button" }
+          { label: "Button" },
         ),
         className: fields.text({ label: "Class Name" }),
         body: fields.mdx({
@@ -374,7 +388,7 @@ export default config({
             }),
             alt: fields.text({ label: "Alt" }),
           },
-          { label: "Image" }
+          { label: "Image" },
         ),
         eyebrow: fields.text({ label: "Eyebrow" }),
         headline: fields.text({ label: "Headline" }),
@@ -401,7 +415,7 @@ export default config({
                 "Only applies when 'Use As Report' is enabled. In HubSpot, open the form's Share or Embed panel and copy the UUID `formId` value from the embed code (eg: 7aef2b29-c63f-4427-bc18-a8c15fbff49b)",
             }),
           },
-          { label: "HubSpot Form CTA" }
+          { label: "HubSpot Form CTA" },
         ),
         categories: fields.array(
           fields.object({
@@ -413,7 +427,7 @@ export default config({
           {
             label: "Report Categories",
             itemLabel: (props) => props.fields.category.value || "Category",
-          }
+          },
         ),
         tags: fields.array(
           fields.object({
@@ -425,7 +439,7 @@ export default config({
           {
             label: "Report Tags",
             itemLabel: (props) => props.fields.tag.value || "Tag",
-          }
+          },
         ),
         body: fields.mdx({
           label: "Body",
@@ -443,7 +457,7 @@ export default config({
           {
             label: "Buttons",
             itemLabel: (props) => props.fields.label.value || "Button",
-          }
+          },
         ),
       },
     }),
@@ -513,7 +527,7 @@ export default config({
           {
             label: "Categories",
             itemLabel: (props) => props.fields.category.value || "Category",
-          }
+          },
         ),
         tags: fields.array(
           fields.object({
@@ -525,7 +539,7 @@ export default config({
           {
             label: "Tags",
             itemLabel: (props) => props.fields.tag.value || "Tag",
-          }
+          },
         ),
         featured: fields.checkbox({
           label: "Featured",
@@ -554,7 +568,7 @@ export default config({
               defaultValue: "system",
             }),
           },
-          { label: "Theme" }
+          { label: "Theme" },
         ),
       },
     }),

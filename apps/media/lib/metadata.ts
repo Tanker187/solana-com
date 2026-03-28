@@ -9,8 +9,8 @@ import type { Metadata } from "next";
 import { config } from "@/lib/config";
 import { reader } from "@/lib/reader";
 import { fetchCategoryByPath } from "@/lib/category-data";
+import { fetchPublishedPostBySlug } from "@/lib/post-data";
 import { fetchPodcastBySlug, fetchEpisodeById } from "@/lib/podcast-data";
-import { isPublishedPost } from "@/lib/keystatic/post-status";
 import { isPublishedReport } from "@/lib/keystatic/report-status";
 
 const { publicUrl, siteMetadata, social } = config;
@@ -71,10 +71,17 @@ export async function newsListingMetadata(): Promise<Metadata> {
 // ---------------------------------------------------------------------------
 
 export async function newsPostMetadata(slug: string): Promise<Metadata> {
-  const post = await reader.collections.posts.read(slug);
+  const post = await fetchPublishedPostBySlug(slug);
 
-  if (!isPublishedPost(post)) {
-    return { title: "Post Not Found", description: "" };
+  if (!post) {
+    return {
+      title: "Post Not Found",
+      description: "",
+      robots: {
+        index: false,
+        follow: false,
+      },
+    };
   }
 
   let authorName: string | undefined;
@@ -150,7 +157,7 @@ export async function newsPostMetadata(slug: string): Promise<Metadata> {
 // ---------------------------------------------------------------------------
 
 export async function categoryListingMetadata(
-  categoryParam: string
+  categoryParam: string,
 ): Promise<Metadata> {
   let categoryName: string | null = null;
   try {
@@ -244,7 +251,7 @@ export async function reportMetadata(slug: string): Promise<Metadata> {
       if (!categoryRef?.category) continue;
 
       const category = await reader.collections.categories.read(
-        String(categoryRef.category)
+        String(categoryRef.category),
       );
 
       if (category?.name) {
@@ -338,7 +345,7 @@ export function podcastsListingMetadata(): Metadata {
 // ---------------------------------------------------------------------------
 
 export async function podcastShowMetadata(
-  podcastSlug: string
+  podcastSlug: string,
 ): Promise<Metadata> {
   const podcast = await fetchPodcastBySlug(podcastSlug);
 
@@ -375,12 +382,12 @@ export async function podcastShowMetadata(
 }
 
 // ---------------------------------------------------------------------------
-// Podcast episode  /podcasts/[slug]/episodes/[id]
+// Podcast episode  /podcasts/[slug]/episodes/[episode-slug]
 // ---------------------------------------------------------------------------
 
 export async function podcastEpisodeMetadata(
   podcastSlug: string,
-  episodeId: string
+  episodeId: string,
 ): Promise<Metadata> {
   const podcast = await fetchPodcastBySlug(podcastSlug);
   const episode = await fetchEpisodeById(episodeId, podcastSlug);
@@ -391,7 +398,7 @@ export async function podcastEpisodeMetadata(
 
   const title = `${episode.title} | ${podcast.title}`;
   const description = episode.description || `Listen to ${episode.title}`;
-  const canonicalUrl = `${publicUrl}/podcasts/${podcastSlug}/episodes/${episodeId}`;
+  const canonicalUrl = `${publicUrl}/podcasts/${podcastSlug}/episodes/${episode.slug}`;
   const image = episode.thumbnailUrl || podcast.coverImage || null;
 
   return {

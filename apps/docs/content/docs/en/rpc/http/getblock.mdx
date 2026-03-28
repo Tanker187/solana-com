@@ -136,14 +136,14 @@ async fn main() -> Result<()> {
 
 #### !! slot number
 
-!type u64
+!type u64  
 !required
 
 Slot number.
 
 #### !! config
 
-!type string | object
+!type string | object  
 !optional
 
 Configuration object. For backwards compatibility, this parameter also accepts a
@@ -158,24 +158,24 @@ When this parameter is an object, it may contain the following fields:
 
 ##### !! commitment
 
-!type string
-!values confirmed finalized
+!type string  
+!values confirmed finalized  
 !default finalized
 
 Solana RPC uses the following commitment levels:
 
-| Value | Description |
-|---|---|
-| `processed` | Return data from the highest slot this node has processed on the fork it currently considers best. This is the newest view, but it can still change if the cluster switches forks. |
-| `confirmed` | Return data from the highest slot that at least two-thirds of active stake has directly voted to confirm. This is more stable than `processed`, but it is still a weaker guarantee than `finalized`. |
+| Value       | Description                                                                                                                                                                                                                                                             |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `processed` | Return data from the highest slot this node has processed on the fork it currently considers best. This is the newest view, but it can still change if the cluster switches forks.                                                                                      |
+| `confirmed` | Return data from the highest slot that at least two-thirds of active stake has directly voted to confirm. This is more stable than `processed`, but it is still a weaker guarantee than `finalized`.                                                                    |
 | `finalized` | Return data from the highest slot that the cluster recognizes as finalized. In Agave, this means the slot has reached maximum vote lockout in validators' vote towers and is recognized by at least two-thirds of active stake. This is the strongest commitment level. |
 
 This method does not accept `processed`.
 
 ##### !! encoding
 
-!type string
-!values binary base58 base64 json jsonParsed
+!type string  
+!values binary base58 base64 json jsonParsed  
 !default json
 
 Encoding format for each returned transaction.
@@ -198,8 +198,8 @@ strings directly.
 
 ##### !! transactionDetails
 
-!type string
-!values full accounts signatures none
+!type string  
+!values full accounts signatures none  
 !default full
 
 Level of transaction detail to return.
@@ -217,7 +217,7 @@ Level of transaction detail to return.
 
 ##### !! maxSupportedTransactionVersion
 
-!type number
+!type number  
 !values 0
 
 Currently, the only valid value for this parameter is `0`. Setting it to `0`
@@ -232,8 +232,8 @@ result in an error.
 
 ##### !! rewards
 
-!type bool
-!values true false
+!type bool  
+!values true false  
 !default true
 
 Whether to populate the rewards array. If parameter not provided, the default
