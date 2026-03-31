@@ -855,8 +855,8 @@ checksums:
     on-off-ramp/filters/close-button/aria-label: d101f574945609f524cefdf960e73378
     on-off-ramp/filters/mobile-dropdown-toggle/aria-label: 1de2ad4fe76a593d9ed8cbb77f3bc736
     on-off-ramp/cards/view-details-title: f89b1a0b178c4e8448cdbee27998ed03
-    wallets/meta/title: 30108fa65c8a56bc0b7e8a12de039066
-    wallets/meta/description: 5cc4ef0f446b75103bf035eee69f3a71
+    wallets/meta/title: eade6dffae33fb7fc1a28ac97207236f
+    wallets/meta/description: a34a0d7d3f79b7370c5d2bc8e258ed14
     wallets/hero/eyebrow: d1567c9c54eab7ebceb5cfa6e8edabf4
     wallets/hero/headline: 8cd61b60a11cd664811f8839d3feecad
     wallets/hero/body: 11a7afce610e7f49d8db7ffc9fb83f77
@@ -865,8 +865,8 @@ checksums:
     wallets/grid/no-results: 3b46dca114ec747ea36b505e17c01010
     wallets/grid/reset-filters: 9d56ad0c7637ea5d19cd1fe43b30b3f6
     wallets/card/view-details: f89b1a0b178c4e8448cdbee27998ed03
-    wallets-landing/meta/seoTitle: 30108fa65c8a56bc0b7e8a12de039066
-    wallets-landing/meta/seoDescription: f2d222dc8bac7977e3fa6ff980ea2969
+    wallets-landing/meta/seoTitle: ab1e91972274fd0c7eed96ef28d913d6
+    wallets-landing/meta/seoDescription: 92bfbdf9622b7825fab248e6680c0c2f
     wallets-landing/hero/eyebrow: d2125faf21c7a66bb7322e3ed235e246
     wallets-landing/hero/headline: 70f7f31252f6e11dee666d18270f968a
     wallets-landing/hero/body: 3436ffb00df306831c0dfd8cd799881f
@@ -4478,6 +4478,7 @@ checksums:
     sdp/header/nav/useCases: c4fe02937fb92de8a033e779a46d9e1c
     sdp/header/nav/partners: 1327dcd6a19cfdace2770858b4555351
     sdp/header/nav/sandbox: 6a9fc49141b63dc19e35fa67a1525941
+    sdp/header/nav/media: f1cc01bf9a5ec0eb41ba765d4f3d7487
     sdp/header/cta: df809925725e9ee8ae0b44c886601aa5
     sdp/hero/title: 965e2e9063c16aa712933d558142544b
     sdp/hero/description: fb810a9cd234246479aa4c1f9ac19ace
@@ -4524,6 +4525,7 @@ checksums:
     sdp/ecosystem/categories/1: aeaca74d80d9480a13ad007e82098e82
     sdp/ecosystem/categories/2: 8c769b66f33999ac37075e110344bf70
     sdp/ecosystem/categories/3: 0e8fdc0995594b7cc623a7b38f6bdc58
+    sdp/news/title: 7b58a8a3830ac4c8982c8d8b2edb3dfc
     sdp/aiAdvantages/title: 5aec0715a30886ff3a0f2a979b50f5a7
     sdp/aiAdvantages/description: 4f220eaa40ef806bbd979299cd0fe35d
     sdp/aiAdvantages/items/0: ff75f15e05c06d6017294adbe1b04689
