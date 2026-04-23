@@ -4,6 +4,8 @@ import { alchemy } from "./records/alchemy";
 import { altitude } from "./records/altitude";
 import { allnodes } from "./records/allnodes";
 import { ampPay } from "./records/amp-pay";
+import { anchorage } from "./records/anchorage";
+import { anoma } from "./records/anoma";
 import { banxa } from "./records/banxa";
 import { arcium } from "./records/arcium";
 import { atxp } from "./records/atxp";
@@ -15,6 +17,7 @@ import { byreal } from "./records/byreal";
 import { coinbase } from "./records/coinbase";
 import { comicbook } from "./records/comicbook";
 import { dabba } from "./records/dabba";
+import { delorean } from "./records/delorean";
 import { darkresearch } from "./records/darkresearch";
 import { doublezero } from "./records/doublezero";
 import { dynamic } from "./records/dynamic";
@@ -27,6 +30,7 @@ import { kast } from "./records/kast";
 import { kazakhstan } from "./records/kazakhstan";
 import { libeara } from "./records/libeara";
 import { matcha } from "./records/matcha";
+import { mantle } from "./records/mantle";
 import { mantleByreal } from "./records/mantle-byreal";
 import { openmined } from "./records/openmined";
 import { osl } from "./records/osl";
@@ -34,8 +38,10 @@ import { phantom } from "./records/phantom";
 import { pipeNetwork } from "./records/pipe-network";
 import { playSolana } from "./records/play-solana";
 import { quicknode } from "./records/quicknode";
+import { ramp } from "./records/ramp";
 import { rockawayx } from "./records/rockawayx";
 import { safepalWallet } from "./records/safepal-wallet";
+import { sofi } from "./records/sofi";
 import { solanaSpaces } from "./records/solana-spaces";
 import { solayer } from "./records/solayer";
 import { solflare } from "./records/solflare";
@@ -50,6 +56,7 @@ import { triton } from "./records/triton";
 import { veliaNet } from "./records/velia-net";
 import { visa } from "./records/visa";
 import { wyoming } from "./records/wyoming";
+import { zerion } from "./records/zerion";
 
 export const companies = [
   aisa,
@@ -57,6 +64,8 @@ export const companies = [
   altitude,
   allnodes,
   ampPay,
+  anchorage,
+  anoma,
   banxa,
   arcium,
   atxp,
@@ -68,6 +77,7 @@ export const companies = [
   coinbase,
   comicbook,
   dabba,
+  delorean,
   darkresearch,
   doublezero,
   dynamic,
@@ -80,6 +90,7 @@ export const companies = [
   kazakhstan,
   libeara,
   matcha,
+  mantle,
   mantleByreal,
   openmined,
   osl,
@@ -87,8 +98,10 @@ export const companies = [
   pipeNetwork,
   playSolana,
   quicknode,
+  ramp,
   rockawayx,
   safepalWallet,
+  sofi,
   solanaSpaces,
   solayer,
   solflare,
@@ -103,6 +116,7 @@ export const companies = [
   veliaNet,
   visa,
   wyoming,
+  zerion,
 ] as const satisfies readonly CompanyRecord[];
 
 export type CompanyId = (typeof companies)[number]["id"];
